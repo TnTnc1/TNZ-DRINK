@@ -5,6 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TNZ Energy - Sélection Interactive Premium</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700;800&display=swap" rel="stylesheet">
+    
+    <meta property="og:title" content="TNZ Energy - La Boisson du Pacifique" />
+    <meta property="og:description" content="Découvrez les saveurs uniques de TNZ Energy. Une expérience interactive et rafraîchissante." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://VOTRE_LIEN_NETLIFY.netlify.app/" />
+    <meta property="og:image" content="https://i.postimg.cc/65NnqV4j/pourfb.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="TNZ Energy - La Boisson du Pacifique">
+    <meta name="twitter:description" content="Découvrez les saveurs uniques de TNZ Energy. Une expérience interactive et rafraîchissante.">
+    <meta name="twitter:image" content="https://i.postimg.cc/65NnqV4j/pourfb.png">
+
     <style>
         /* --- Reset & Base Styles --- */
         * {
@@ -65,10 +79,9 @@
 
         /* --- Setup Animation 3D de la Canette (Carrousel) --- */
         .can-stage {
-            /* MODIFIÉ : Augmentation FINALE de la largeur pour un effet "pleine page" */
             perspective: 1500px; 
             height: 100vh; 
-            width: 65vh; /* Largeur considérablement augmentée pour remplir l'écran */
+            width: 65vh;
             margin-bottom: 0;
             flex-shrink: 0;
             overflow: hidden;
@@ -179,7 +192,6 @@
         /* --- Design Responsive Renforcé --- */
         @media (max-width: 768px) {
             .can-stage {
-                /* MODIFIÉ : Largeur maximale sur mobile */
                 height: 90vh;
                 width: 60vh;
                 margin-bottom: 0;
@@ -209,7 +221,6 @@
 
          @media (max-height: 800px) and (min-width: 769px) {
             .can-stage {
-                /* MODIFIÉ : Largeur maximale pour les écrans larges mais peu hauts */
                  height: 95vh;
                  width: 62vh;
             }
@@ -265,7 +276,6 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // 1. Définition des Données (ASSETS FINAIS INTÉGRÉS)
             const flavors = [
                 {
                     title: 'TNZ Energy - Original',
@@ -287,7 +297,6 @@
                 }
             ];
 
-            // 2. Initialisation de l'état
             let currentIndex = 0;
             let rotationAngle = 0;
             let isAnimating = false;
@@ -303,7 +312,6 @@
             const navPrev = document.getElementById('nav-prev');
             const navNext = document.getElementById('nav-next');
 
-            // 3. Fonction d'initialisation
             function initialize() {
                 preloadImages();
 
@@ -329,7 +337,6 @@
                 setupEventListeners();
             }
 
-            // 4. Logique 3D et Responsivité
             function calculateRadius() {
                  const stageWidth = canStage.offsetWidth;
                  return Math.round( (stageWidth / 2) / Math.tan( Math.PI / flavors.length ) ) * 1.05;
@@ -352,7 +359,6 @@
                 }, 50);
             }
 
-            // 5. Logique de Navigation
             function navigate(direction) {
                 if (isAnimating) return;
                 isAnimating = true;
@@ -375,7 +381,6 @@
                 }, animationDuration);
             }
 
-            // 6. Fonctions de mise à jour
             function updateSlide(newIndex, initial = false) {
                 const flavor = flavors[newIndex];
                 updateBackground(newIndex);
@@ -405,7 +410,6 @@
                 }, 400);
             }
 
-            // 7. Utilitaires
             function setupEventListeners() {
                 navPrev.addEventListener('click', () => navigate(-1));
                 navNext.addEventListener('click', () => navigate(1));
