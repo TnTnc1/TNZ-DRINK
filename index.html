@@ -7,7 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700;800&display=swap" rel="stylesheet">
     
     <meta property="og:title" content="TNZ Energy - La Boisson du Pacifique" />
-    <meta property="og:description" content="Découvrez les saveurs uniques de TNZ Energy. Une expérience interactive et rafraîchissante." />
+    <meta property="og:description" content="Découvrez les saveurs uniques de TNZ Energy. Une expérience interactive et rafraîîchissante." />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://VOTRE_LIEN_NETLIFY.netlify.app/" />
     <meta property="og:image" content="https://i.postimg.cc/65NnqV4j/pourfb.png" />
@@ -30,8 +30,30 @@
         body {
             font-family: 'Poppins', sans-serif;
             color: #1a1a1a;
-            background-color: #fff;
+            background-color: #000; /* Fond noir pour éviter un flash blanc au chargement */
             overflow: hidden;
+        }
+
+        /* NOUVEAU : Styles pour l'intro vidéo */
+        #intro-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 9999;
+            background-color: #000;
+            transition: opacity 0.8s ease-out;
+        }
+
+        #intro-video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Assure que la vidéo couvre tout l'écran sans se déformer */
+        }
+        
+        #intro-container.fade-out {
+            opacity: 0;
         }
 
         /* --- Conteneur Principal --- */
@@ -42,6 +64,16 @@
             align-items: center;
             justify-content: center;
             position: relative;
+            /* NOUVEAU : Commence masqué et apparaît en fondu */
+            opacity: 0;
+            transition: opacity 1s ease-in;
+            pointer-events: none; /* Désactive les clics pendant qu'il est invisible */
+        }
+        
+        /* NOUVEAU : Classe pour faire apparaître le contenu principal */
+        .tnz-showcase.visible {
+            opacity: 1;
+            pointer-events: auto; /* Réactive les clics */
         }
 
         /* --- Gestion des Arrière-plans (Fondu Enchaîné) --- */
@@ -255,6 +287,13 @@
 </head>
 <body>
 
+    <div id="intro-container">
+        <video id="intro-video" autoplay muted playsinline>
+            <source src="https://res.cloudinary.com/drjkiqihn/video/upload/v1756785442/Scene_3_710_202509021455_6ffj4_enxu3y.mp4" type="video/mp4">
+            Votre navigateur ne supporte pas les vidéos.
+        </video>
+    </div>
+
     <div class="tnz-showcase" id="tnz-showcase">
         <div id="background-wrapper"></div>
         
@@ -276,6 +315,28 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            // NOUVEAU : Logique pour l'introduction vidéo
+            const introContainer = document.getElementById('intro-container');
+            const introVideo = document.getElementById('intro-video');
+            const tnzShowcase = document.getElementById('tnz-showcase');
+
+            // On écoute l'événement de fin de la vidéo
+            introVideo.addEventListener('ended', () => {
+                // 1. On lance le fondu sortant pour la vidéo
+                introContainer.classList.add('fade-out');
+
+                // On écoute la fin de la transition CSS
+                introContainer.addEventListener('transitionend', () => {
+                    // 2. On supprime le conteneur de la vidéo
+                    introContainer.style.display = 'none';
+                }, { once: true }); // 'once: true' pour que l'événement ne se déclenche qu'une fois
+
+                // 3. On fait apparaître le contenu principal
+                tnzShowcase.classList.add('visible');
+            });
+
+
+            // 1. Définition des Données (ASSETS FINAIS INTÉGRÉS)
             const flavors = [
                 {
                     title: 'TNZ Energy - Original',
@@ -297,6 +358,7 @@
                 }
             ];
 
+            // 2. Initialisation de l'état
             let currentIndex = 0;
             let rotationAngle = 0;
             let isAnimating = false;
@@ -312,6 +374,7 @@
             const navPrev = document.getElementById('nav-prev');
             const navNext = document.getElementById('nav-next');
 
+            // 3. Fonction d'initialisation
             function initialize() {
                 preloadImages();
 
@@ -337,6 +400,7 @@
                 setupEventListeners();
             }
 
+            // 4. Logique 3D et Responsivité
             function calculateRadius() {
                  const stageWidth = canStage.offsetWidth;
                  return Math.round( (stageWidth / 2) / Math.tan( Math.PI / flavors.length ) ) * 1.05;
@@ -359,6 +423,7 @@
                 }, 50);
             }
 
+            // 5. Logique de Navigation
             function navigate(direction) {
                 if (isAnimating) return;
                 isAnimating = true;
@@ -381,6 +446,7 @@
                 }, animationDuration);
             }
 
+            // 6. Fonctions de mise à jour
             function updateSlide(newIndex, initial = false) {
                 const flavor = flavors[newIndex];
                 updateBackground(newIndex);
@@ -410,6 +476,7 @@
                 }, 400);
             }
 
+            // 7. Utilitaires
             function setupEventListeners() {
                 navPrev.addEventListener('click', () => navigate(-1));
                 navNext.addEventListener('click', () => navigate(1));
