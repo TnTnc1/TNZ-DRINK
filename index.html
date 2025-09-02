@@ -74,25 +74,35 @@
             pointer-events: auto;
         }
 
-        /* --- Gestion des Arrière-plans (Fondu Enchaîné) --- */
+        /* --- MODIFIÉ : Gestion des Arrière-plans VIDÉO --- */
         .background-layer {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-size: cover;
-            background-position: center;
             opacity: 0;
-            transition: opacity 1s cubic-bezier(0.25, 0.46, 0.45, 0.94), transform 1.5s ease-out;
+            transition: opacity 1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             z-index: 1;
-            transform: scale(1.05);
+            overflow: hidden; /* Empêche la vidéo de déborder */
+        }
+        
+        .background-layer video {
+            /* Assure que la vidéo couvre tout l'arrière-plan */
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            z-index: -1;
         }
 
         .background-layer.active {
             opacity: 1;
             z-index: 2;
-            transform: scale(1);
         }
 
         /* --- Zone de Contenu --- */
@@ -222,13 +232,11 @@
         /* --- Design Responsive Renforcé --- */
         @media (max-width: 768px) {
             .can-stage {
-                /* MODIFIÉ POUR MOBILE : Taille de la canette réduite pour laisser de la place */
                 height: 75vh;
                 width: 40vh;
                 margin-bottom: 0;
             }
             .text-container {
-                /* MODIFIÉ POUR MOBILE : Ajout d'un fond pour la lisibilité et ajustement de la position */
                 bottom: 0;
                 width: 100%;
                 max-width: 100%;
@@ -236,11 +244,9 @@
                 background: linear-gradient(to top, rgba(0, 0, 0, 0.85) 20%, rgba(0, 0, 0, 0.7) 60%, transparent 100%);
             }
             h1 {
-                /* MODIFIÉ POUR MOBILE : Taille de police légèrement ajustée */
                 font-size: 1.8rem;
             }
             p {
-                /* MODIFIÉ POUR MOBILE : Taille de police légèrement ajustée */
                 font-size: 0.9rem;
             }
             .nav-btn {
@@ -332,24 +338,25 @@
                 tnzShowcase.classList.add('visible');
             });
 
+            // --- MODIFIÉ : Utilisation des liens vidéo ---
             const flavors = [
                 {
                     title: 'TNZ Energy - Original',
                     description: "L'essence pure du Pacifique dans une boisson énergisante à base de plantes. Retrouvez l'équilibre parfait entre force et fraîcheur inspiré par la richesse de la Nouvelle-Calédonie.",
                     canImage: 'https://i.postimg.cc/MK535Lzj/canette-fond-blanc-1.png',
-                    backgroundImage: 'https://i.postimg.cc/1zW1nzj4/fond-blanc-1.png'
+                    backgroundVideo: 'https://res.cloudinary.com/drjkiqihn/video/upload/v1756853312/vid_fond_blanc_1_ajf3rl.mp4'
                 },
                 {
                     title: 'TNZ Energy - Fruit de la Passion & Mangue',
                     description: "Une explosion de saveurs tropicales. Laissez-vous transporter par la douceur sucrée de la mangue et le zeste pétillant du fruit de la passion. Votre dose d'énergie ensoleillée.",
                     canImage: 'https://i.postimg.cc/KjFQrPVN/canette-fond-blanc-2.png',
-                    backgroundImage: 'https://i.postimg.cc/j27pF4dJ/fond-blanc-2.png'
+                    backgroundVideo: 'https://res.cloudinary.com/drjkiqihn/video/upload/v1756853401/vid_fond_blanc_2_xtf78k.mp4'
                 },
                 {
                     title: 'TNZ Energy - Lagon Bleu & Citron Vert',
                     description: "Plongez dans une vague de fraîcheur revitalisante. L'éclat vivifiant du citron vert rencontre la pureté cristalline du lagon, pour une énergie pétillante et désaltérante.",
                     canImage: 'https://i.postimg.cc/CLhmR4bM/canette-fond-blanc-3.png',
-                    backgroundImage: 'https://i.postimg.cc/9F2g2hLk/fond-blanc-3.png'
+                    backgroundVideo: 'https://res.cloudinary.com/drjkiqihn/video/upload/v1756853528/vid_fond_blanc_3_iineie.mp4'
                 }
             ];
 
@@ -369,13 +376,22 @@
             const navNext = document.getElementById('nav-next');
 
             function initialize() {
-                preloadImages();
+                preloadVideos(); // MODIFIÉ : Préchargement des vidéos
 
                 flavors.forEach((flavor, index) => {
                     const bgLayer = document.createElement('div');
                     bgLayer.classList.add('background-layer');
                     bgLayer.id = `bg-${index}`;
-                    bgLayer.style.backgroundImage = `url(${flavor.backgroundImage})`;
+                    
+                    // --- MODIFIÉ : Création de la balise vidéo ---
+                    const video = document.createElement('video');
+                    video.src = flavor.backgroundVideo;
+                    video.autoplay = true;
+                    video.loop = true;
+                    video.muted = true;
+                    video.playsInline = true; // Important pour iOS
+
+                    bgLayer.appendChild(video);
                     backgroundWrapper.appendChild(bgLayer);
 
                     const canFace = document.createElement('div');
@@ -444,9 +460,7 @@
             }
 
             function updateBackground(newIndex) {
-                document.querySelectorAll('.background-layer').forEach(bg => {
-                    bg.classList.remove('active');
-                });
+                document.querySelectorAll('.background-layer').forEach(bg => bg.classList.remove('active'));
                 document.getElementById(`bg-${newIndex}`).classList.add('active');
             }
 
@@ -476,10 +490,12 @@
                 });
             }
 
-            function preloadImages() {
+            // MODIFIÉ : Fonction de préchargement pour les vidéos
+            function preloadVideos() {
                 flavors.forEach(flavor => {
+                    // Le navigateur gère le préchargement via les balises vidéo,
+                    // mais s'assurer que les images des canettes sont chargées est toujours une bonne idée.
                     new Image().src = flavor.canImage;
-                    new Image().src = flavor.backgroundImage;
                 });
             }
 
