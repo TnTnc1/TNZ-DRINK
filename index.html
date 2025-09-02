@@ -74,7 +74,7 @@
             pointer-events: auto;
         }
 
-        /* --- MODIFIÉ : Gestion des Arrière-plans VIDÉO --- */
+        /* --- Gestion des Arrière-plans VIDÉO --- */
         .background-layer {
             position: absolute;
             top: 0;
@@ -84,11 +84,10 @@
             opacity: 0;
             transition: opacity 1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             z-index: 1;
-            overflow: hidden; /* Empêche la vidéo de déborder */
+            overflow: hidden;
         }
         
         .background-layer video {
-            /* Assure que la vidéo couvre tout l'arrière-plan */
             position: absolute;
             top: 50%;
             left: 50%;
@@ -338,19 +337,19 @@
                 tnzShowcase.classList.add('visible');
             });
 
-            // --- MODIFIÉ : Utilisation des liens vidéo ---
+            // --- MODIFIÉ : Nouveaux liens vidéo 16:9 ---
             const flavors = [
                 {
                     title: 'TNZ Energy - Original',
                     description: "L'essence pure du Pacifique dans une boisson énergisante à base de plantes. Retrouvez l'équilibre parfait entre force et fraîcheur inspiré par la richesse de la Nouvelle-Calédonie.",
                     canImage: 'https://i.postimg.cc/MK535Lzj/canette-fond-blanc-1.png',
-                    backgroundVideo: 'https://res.cloudinary.com/drjkiqihn/video/upload/v1756853312/vid_fond_blanc_1_ajf3rl.mp4'
+                    backgroundVideo: 'https://res.cloudinary.com/drjkiqihn/video/upload/v1756855309/vid_fond_blanc_1_qcpuyo.mp4'
                 },
                 {
                     title: 'TNZ Energy - Fruit de la Passion & Mangue',
                     description: "Une explosion de saveurs tropicales. Laissez-vous transporter par la douceur sucrée de la mangue et le zeste pétillant du fruit de la passion. Votre dose d'énergie ensoleillée.",
                     canImage: 'https://i.postimg.cc/KjFQrPVN/canette-fond-blanc-2.png',
-                    backgroundVideo: 'https://res.cloudinary.com/drjkiqihn/video/upload/v1756853401/vid_fond_blanc_2_xtf78k.mp4'
+                    backgroundVideo: 'https://res.cloudinary.com/drjkiqihn/video/upload/v1756855325/vid_fond_blanc_2_qxiaz9.mp4'
                 },
                 {
                     title: 'TNZ Energy - Lagon Bleu & Citron Vert',
@@ -376,20 +375,19 @@
             const navNext = document.getElementById('nav-next');
 
             function initialize() {
-                preloadVideos(); // MODIFIÉ : Préchargement des vidéos
+                preloadVideos();
 
                 flavors.forEach((flavor, index) => {
                     const bgLayer = document.createElement('div');
                     bgLayer.classList.add('background-layer');
                     bgLayer.id = `bg-${index}`;
                     
-                    // --- MODIFIÉ : Création de la balise vidéo ---
                     const video = document.createElement('video');
                     video.src = flavor.backgroundVideo;
                     video.autoplay = true;
                     video.loop = true;
                     video.muted = true;
-                    video.playsInline = true; // Important pour iOS
+                    video.playsInline = true;
 
                     bgLayer.appendChild(video);
                     backgroundWrapper.appendChild(bgLayer);
@@ -490,11 +488,8 @@
                 });
             }
 
-            // MODIFIÉ : Fonction de préchargement pour les vidéos
             function preloadVideos() {
                 flavors.forEach(flavor => {
-                    // Le navigateur gère le préchargement via les balises vidéo,
-                    // mais s'assurer que les images des canettes sont chargées est toujours une bonne idée.
                     new Image().src = flavor.canImage;
                 });
             }
