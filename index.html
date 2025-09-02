@@ -151,9 +151,8 @@
             filter: drop-shadow(0px 35px 45px rgba(0,0,0,0.25));
         }
 
-        /* --- Contenu Textuel (Transition en Fondu) --- */
+        /* --- Contenu Textuel --- */
         .text-container {
-            transition: opacity 0.5s ease-out, transform 0.5s ease-out;
             overflow-y: auto; 
             position: absolute;
             bottom: 3vh;
@@ -163,9 +162,26 @@
             z-index: 6;
         }
 
-        .text-container.fade-out {
-            opacity: 0;
-            transform: translateX(-50%) translateY(20px);
+        h1, p {
+            /* MODIFIÉ : Ajout d'un conteneur "masque" pour l'animation */
+            overflow: hidden;
+        }
+
+        #flavor-title-inner, #flavor-description-inner {
+             /* MODIFIÉ : C'est cet élément qui va glisser vers le haut */
+            display: block;
+            transform: translateY(110%);
+            transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        /* MODIFIÉ : Logique d'animation du texte */
+        .text-container.is-visible #flavor-title-inner {
+            transform: translateY(0);
+            transition-delay: 0.2s; /* Le titre apparaît en premier */
+        }
+        .text-container.is-visible #flavor-description-inner {
+            transform: translateY(0);
+            transition-delay: 0.3s; /* La description juste après */
         }
 
         h1 {
@@ -197,19 +213,22 @@
             font-size: 2rem;
             cursor: pointer;
             z-index: 10;
-            transition: background 0.3s ease, transform 0.3s ease, opacity 0.3s ease, color 0.3s ease;
             border-radius: 50%;
             width: 60px;
             height: 60px;
             display: flex;
             align-items: center;
             justify-content: center;
+            /* MODIFIÉ : Transition sur toutes les propriétés pour un effet plus fluide */
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
 
         .nav-btn:hover {
-            background: rgba(255, 255, 255, 0.9);
+            /* MODIFIÉ : Effet au survol plus prononcé */
+            background: rgba(255, 255, 255, 0.95);
             color: #000;
-            transform: translateY(-50%) scale(1.1);
+            transform: translateY(-50%) scale(1.15);
+            box-shadow: 0px 10px 30px rgba(0,0,0,0.2);
         }
 
         .nav-btn:disabled {
@@ -314,8 +333,8 @@
             </div>
             
             <div class="text-container" id="text-container">
-                <h1 id="flavor-title"></h1>
-                <p id="flavor-description"></p>
+                <h1 id="flavor-title"><span id="flavor-title-inner"></span></h1>
+                <p id="flavor-description"><span id="flavor-description-inner"></span></p>
             </div>
         </div>
 
@@ -368,8 +387,11 @@
             const canStage = document.getElementById('can-stage');
             const canCarousel = document.getElementById('can-carousel');
             const textContainer = document.getElementById('text-container');
-            const flavorTitle = document.getElementById('flavor-title');
-            const flavorDescription = document.getElementById('flavor-description');
+            
+            // MODIFIÉ : Références vers les nouveaux spans internes
+            const flavorTitleInner = document.getElementById('flavor-title-inner');
+            const flavorDescriptionInner = document.getElementById('flavor-description-inner');
+
             const navPrev = document.getElementById('nav-prev');
             const navNext = document.getElementById('nav-next');
 
@@ -461,20 +483,24 @@
                 document.getElementById(`bg-${newIndex}`).classList.add('active');
             }
 
+            // MODIFIÉ : Fonction de mise à jour du texte pour gérer la nouvelle animation
             function updateText(flavor, initial = false) {
                 if (initial) {
-                    flavorTitle.textContent = flavor.title;
-                    flavorDescription.textContent = flavor.description;
+                    flavorTitleInner.textContent = flavor.title;
+                    flavorDescriptionInner.textContent = flavor.description;
+                    textContainer.classList.add('is-visible');
                     return;
                 }
 
-                textContainer.classList.add('fade-out');
+                // 1. On cache l'ancien texte (animation vers le bas)
+                textContainer.classList.remove('is-visible');
 
+                // 2. On attend un peu, puis on met à jour le contenu et on le fait réapparaître
                 setTimeout(() => {
-                    flavorTitle.textContent = flavor.title;
-                    flavorDescription.textContent = flavor.description;
-                    textContainer.classList.remove('fade-out');
-                }, 400);
+                    flavorTitleInner.textContent = flavor.title;
+                    flavorDescriptionInner.textContent = flavor.description;
+                    textContainer.classList.add('is-visible');
+                }, 450); // Ce délai doit être synchronisé avec la transition CSS
             }
 
             function setupEventListeners() {
