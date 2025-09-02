@@ -30,7 +30,7 @@
         body {
             font-family: 'Poppins', sans-serif;
             color: #1a1a1a;
-            background-color: #000; /* Fond noir pour éviter un flash blanc au chargement */
+            background-color: #000;
             overflow: hidden;
         }
 
@@ -49,7 +49,7 @@
         #intro-video {
             width: 100%;
             height: 100%;
-            object-fit: cover; /* Assure que la vidéo couvre tout l'écran sans se déformer */
+            object-fit: cover;
         }
         
         #intro-container.fade-out {
@@ -66,12 +66,12 @@
             position: relative;
             opacity: 0;
             transition: opacity 1s ease-in;
-            pointer-events: none; /* Désactive les clics pendant qu'il est invisible */
+            pointer-events: none;
         }
         
         .tnz-showcase.visible {
             opacity: 1;
-            pointer-events: auto; /* Réactive les clics */
+            pointer-events: auto;
         }
 
         /* --- Gestion des Arrière-plans (Fondu Enchaîné) --- */
@@ -222,19 +222,26 @@
         /* --- Design Responsive Renforcé --- */
         @media (max-width: 768px) {
             .can-stage {
-                height: 90vh;
-                width: 60vh;
+                /* MODIFIÉ POUR MOBILE : Taille de la canette réduite pour laisser de la place */
+                height: 75vh;
+                width: 40vh;
                 margin-bottom: 0;
             }
+            .text-container {
+                /* MODIFIÉ POUR MOBILE : Ajout d'un fond pour la lisibilité et ajustement de la position */
+                bottom: 0;
+                width: 100%;
+                max-width: 100%;
+                padding: 3rem 1rem 1rem 1rem;
+                background: linear-gradient(to top, rgba(0, 0, 0, 0.85) 20%, rgba(0, 0, 0, 0.7) 60%, transparent 100%);
+            }
             h1 {
-                font-size: 2rem;
+                /* MODIFIÉ POUR MOBILE : Taille de police légèrement ajustée */
+                font-size: 1.8rem;
             }
             p {
+                /* MODIFIÉ POUR MOBILE : Taille de police légèrement ajustée */
                 font-size: 0.9rem;
-            }
-            .text-container {
-                bottom: 2vh;
-                padding: 0 10px;
             }
             .nav-btn {
                 width: 45px;
