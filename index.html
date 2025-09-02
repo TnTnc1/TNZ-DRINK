@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TNZ Energy - Sélection Interactive Premium</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* --- Reset & Base Styles --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            color: #1a1a1a;
+            background-color: #fff;
+            overflow: hidden;
+        }
+
+        /* --- Conteneur Principal --- */
+        .tnz-showcase {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        /* --- Gestion des Arrière-plans (Fondu Enchaîné) --- */
+        .background-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            opacity: 0;
+            transition: opacity 1s cubic-bezier(0.25, 0.46, 0.45, 0.94), transform 1.5s ease-out;
+            z-index: 1;
+            transform: scale(1.05);
+        }
+
+        .background-layer.active {
+            opacity: 1;
+            z-index: 2;
+            transform: scale(1);
+        }
+
+        /* --- Zone de Contenu --- */
+        .content-wrapper {
+            z-index: 5;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            max-width: 1200px;
+            padding: 20px;
+            max-height: 100vh; 
+        }
+
+        /* --- Setup Animation 3D de la Canette (Carrousel) --- */
+        .can-stage {
+            /* MODIFIÉ : Augmentation FINALE de la largeur pour un effet "pleine page" */
+            perspective: 1500px; 
+            height: 100vh; 
+            width: 65vh; /* Largeur considérablement augmentée pour remplir l'écran */
+            margin-bottom: 0;
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+
+        .can-carousel {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.8s cubic-bezier(0.77, 0, 0.175, 1);
+        }
+
+        .can-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .can-face img {
+            max-height: 100%;
+            max-width: 100%;
+            object-fit: contain;
+            filter: drop-shadow(0px 35px 45px rgba(0,0,0,0.25));
+        }
+
+        /* --- Contenu Textuel (Transition en Fondu) --- */
+        .text-container {
+            transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+            overflow-y: auto; 
+            position: absolute;
+            bottom: 3vh;
+            left: 50%;
+            transform: translateX(-50%);
+            max-width: 90%;
+            z-index: 6;
+        }
+
+        .text-container.fade-out {
+            opacity: 0;
+            transform: translateX(-50%) translateY(20px);
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 15px;
+            line-height: 1.2;
+            color: #fff;
+            text-shadow: 0px 4px 8px rgba(0, 0, 0, 0.7);
+        }
+
+        p {
+            font-size: 1.2rem;
+            line-height: 1.6;
+            font-weight: 400;
+            color: #fff;
+            max-width: 800px;
+            text-shadow: 0px 2px 6px rgba(0, 0, 0, 0.8);
+        }
+
+        /* --- Navigation --- */
+        .nav-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: #fff;
+            font-size: 2rem;
+            cursor: pointer;
+            z-index: 10;
+            transition: background 0.3s ease, transform 0.3s ease, opacity 0.3s ease, color 0.3s ease;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.9);
+            color: #000;
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.3;
+            cursor: default;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.05);
+            color: #333;
+        }
+
+        .nav-btn.prev {
+            left: 30px;
+        }
+
+        .nav-btn.next {
+            right: 30px;
+        }
+
+        /* --- Design Responsive Renforcé --- */
+        @media (max-width: 768px) {
+            .can-stage {
+                /* MODIFIÉ : Largeur maximale sur mobile */
+                height: 90vh;
+                width: 60vh;
+                margin-bottom: 0;
+            }
+            h1 {
+                font-size: 2rem;
+            }
+            p {
+                font-size: 0.9rem;
+            }
+            .text-container {
+                bottom: 2vh;
+                padding: 0 10px;
+            }
+            .nav-btn {
+                width: 45px;
+                height: 45px;
+                font-size: 1.3rem;
+            }
+            .nav-btn.prev {
+                left: 10px;
+            }
+             .nav-btn.next {
+                right: 10px;
+            }
+        }
+
+         @media (max-height: 800px) and (min-width: 769px) {
+            .can-stage {
+                /* MODIFIÉ : Largeur maximale pour les écrans larges mais peu hauts */
+                 height: 95vh;
+                 width: 62vh;
+            }
+            h1 {
+                font-size: 3rem;
+            }
+             p {
+                font-size: 1.1rem;
+            }
+            .text-container {
+                bottom: 2vh;
+            }
+         }
+
+          @media (max-height: 500px) {
+             h1 {
+                font-size: 1.6rem;
+                margin-bottom: 5px;
+            }
+            p {
+                font-size: 0.8rem;
+            }
+            .can-stage {
+                margin-bottom: 0;
+            }
+            .text-container {
+                bottom: 1vh;
+            }
+         }
+
+    </style>
+</head>
+<body>
+
+    <div class="tnz-showcase" id="tnz-showcase">
+        <div id="background-wrapper"></div>
+        
+        <div class="content-wrapper">
+            <div class="can-stage" id="can-stage">
+                <div class="can-carousel" id="can-carousel">
+                    </div>
+            </div>
+            
+            <div class="text-container" id="text-container">
+                <h1 id="flavor-title"></h1>
+                <p id="flavor-description"></p>
+            </div>
+        </div>
+
+        <button class="nav-btn prev" id="nav-prev" aria-label="Saveur précédente">&#10094;</button>
+        <button class="nav-btn next" id="nav-next" aria-label="Saveur suivante">&#10095;</button>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // 1. Définition des Données (ASSETS FINAIS INTÉGRÉS)
+            const flavors = [
+                {
+                    title: 'TNZ Energy - Original',
+                    description: "L'essence pure du Pacifique dans une boisson énergisante à base de plantes. Retrouvez l'équilibre parfait entre force et fraîcheur inspiré par la richesse de la Nouvelle-Calédonie.",
+                    canImage: 'https://i.postimg.cc/MK535Lzj/canette-fond-blanc-1.png',
+                    backgroundImage: 'https://i.postimg.cc/1zW1nzj4/fond-blanc-1.png'
+                },
+                {
+                    title: 'TNZ Energy - Fruit de la Passion & Mangue',
+                    description: "Une explosion de saveurs tropicales. Laissez-vous transporter par la douceur sucrée de la mangue et le zeste pétillant du fruit de la passion. Votre dose d'énergie ensoleillée.",
+                    canImage: 'https://i.postimg.cc/KjFQrPVN/canette-fond-blanc-2.png',
+                    backgroundImage: 'https://i.postimg.cc/j27pF4dJ/fond-blanc-2.png'
+                },
+                {
+                    title: 'TNZ Energy - Lagon Bleu & Citron Vert',
+                    description: "Plongez dans une vague de fraîcheur revitalisante. L'éclat vivifiant du citron vert rencontre la pureté cristalline du lagon, pour une énergie pétillante et désaltérante.",
+                    canImage: 'https://i.postimg.cc/CLhmR4bM/canette-fond-blanc-3.png',
+                    backgroundImage: 'https://i.postimg.cc/9F2g2hLk/fond-blanc-3.png'
+                }
+            ];
+
+            // 2. Initialisation de l'état
+            let currentIndex = 0;
+            let rotationAngle = 0;
+            let isAnimating = false;
+            const animationDuration = 800;
+            const rotationIncrement = 360 / flavors.length;
+
+            const backgroundWrapper = document.getElementById('background-wrapper');
+            const canStage = document.getElementById('can-stage');
+            const canCarousel = document.getElementById('can-carousel');
+            const textContainer = document.getElementById('text-container');
+            const flavorTitle = document.getElementById('flavor-title');
+            const flavorDescription = document.getElementById('flavor-description');
+            const navPrev = document.getElementById('nav-prev');
+            const navNext = document.getElementById('nav-next');
+
+            // 3. Fonction d'initialisation
+            function initialize() {
+                preloadImages();
+
+                flavors.forEach((flavor, index) => {
+                    const bgLayer = document.createElement('div');
+                    bgLayer.classList.add('background-layer');
+                    bgLayer.id = `bg-${index}`;
+                    bgLayer.style.backgroundImage = `url(${flavor.backgroundImage})`;
+                    backgroundWrapper.appendChild(bgLayer);
+
+                    const canFace = document.createElement('div');
+                    canFace.classList.add('can-face');
+                                        
+                    const img = document.createElement('img');
+                    img.src = flavor.canImage;
+                    img.alt = flavor.title;
+                    canFace.appendChild(img);
+                    canCarousel.appendChild(canFace);
+                });
+
+                resizeCarousel(); 
+                updateSlide(currentIndex, true);
+                setupEventListeners();
+            }
+
+            // 4. Logique 3D et Responsivité
+            function calculateRadius() {
+                 const stageWidth = canStage.offsetWidth;
+                 return Math.round( (stageWidth / 2) / Math.tan( Math.PI / flavors.length ) ) * 1.05;
+            }
+
+            function resizeCarousel() {
+                const radius = calculateRadius();
+                
+                document.querySelectorAll('.can-face').forEach((face, index) => {
+                     face.style.transform = `rotateY(${index * rotationIncrement}deg) translateZ(${radius}px)`;
+                });
+                
+                const currentTransform = `translateZ(-${radius}px) rotateY(${rotationAngle}deg)`;
+                
+                canCarousel.style.transition = 'none'; 
+                canCarousel.style.transform = currentTransform;
+                
+                setTimeout(() => {
+                    canCarousel.style.transition = '';
+                }, 50);
+            }
+
+            // 5. Logique de Navigation
+            function navigate(direction) {
+                if (isAnimating) return;
+                isAnimating = true;
+                navPrev.disabled = true;
+                navNext.disabled = true;
+
+                currentIndex = (currentIndex + direction + flavors.length) % flavors.length;
+
+                rotationAngle += (direction * -rotationIncrement); 
+                
+                const radius = calculateRadius();
+                canCarousel.style.transform = `translateZ(-${radius}px) rotateY(${rotationAngle}deg)`;
+
+                updateSlide(currentIndex);
+
+                setTimeout(() => {
+                    isAnimating = false;
+                    navPrev.disabled = false;
+                    navNext.disabled = false;
+                }, animationDuration);
+            }
+
+            // 6. Fonctions de mise à jour
+            function updateSlide(newIndex, initial = false) {
+                const flavor = flavors[newIndex];
+                updateBackground(newIndex);
+                updateText(flavor, initial);
+            }
+
+            function updateBackground(newIndex) {
+                document.querySelectorAll('.background-layer').forEach(bg => {
+                    bg.classList.remove('active');
+                });
+                document.getElementById(`bg-${newIndex}`).classList.add('active');
+            }
+
+            function updateText(flavor, initial = false) {
+                if (initial) {
+                    flavorTitle.textContent = flavor.title;
+                    flavorDescription.textContent = flavor.description;
+                    return;
+                }
+
+                textContainer.classList.add('fade-out');
+
+                setTimeout(() => {
+                    flavorTitle.textContent = flavor.title;
+                    flavorDescription.textContent = flavor.description;
+                    textContainer.classList.remove('fade-out');
+                }, 400);
+            }
+
+            // 7. Utilitaires
+            function setupEventListeners() {
+                navPrev.addEventListener('click', () => navigate(-1));
+                navNext.addEventListener('click', () => navigate(1));
+                window.addEventListener('resize', resizeCarousel);
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'ArrowLeft') navigate(-1);
+                    if (e.key === 'ArrowRight') navigate(1);
+                });
+            }
+
+            function preloadImages() {
+                flavors.forEach(flavor => {
+                    new Image().src = flavor.canImage;
+                    new Image().src = flavor.backgroundImage;
+                });
+            }
+
+            initialize();
+        });
+    </script>
+
+</body>
+</html>
